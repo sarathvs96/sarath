@@ -1,149 +1,55 @@
+
 import 'package:flutter/material.dart';
+import 'package:sarath/gmail_homepage.dart';
+import 'package:sarath/page1.dart';
+import 'package:sarath/page2.dart';
+import 'package:sarath/page3.dart';
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:sarath/progress_dialog_test.dart';
+import 'package:sarath/zoom_drawer_test.dart';
 
-/// Flutter code sample for [Flow].
+import 'auto_size_text_test.dart';
+import 'otp_textfield_example.dart';
 
-void main() => runApp(const RunApp());
+void main() => runApp(MaterialApp(home: OtpTextFieldExample()));
 
-class RunApp extends StatelessWidget {
-  const RunApp({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Flow Example'),
-        ),
-        body:  HomePage(),
-      ),
-    );
-  }
-}
-
-class FlowMenu extends StatefulWidget {
-  const FlowMenu({super.key});
+class HelloConvexAppBar extends StatefulWidget {
 
   @override
-  State<FlowMenu> createState() => _FlowMenuState();
+  State<HelloConvexAppBar> createState() => _HelloConvexAppBarState();
 }
 
-class _FlowMenuState extends State<FlowMenu>
-    with SingleTickerProviderStateMixin {
-  late AnimationController menuAnimation;
-  IconData lastTapped = Icons.notifications;
-  final List<IconData> menuItems = <IconData>[
-    Icons.home,
-    Icons.new_releases,
-    Icons.notifications,
-    Icons.settings,
-    Icons.menu,
+class _HelloConvexAppBarState extends State<HelloConvexAppBar> {
+  int _selectedIndex = 1;
+  static const List<Widget> _widgetOptions = [
+    Page1(),
+    Page2(),
+    Page3()
   ];
 
-  void _updateMenu(IconData icon) {
-    if (icon != Icons.menu) {
-      setState(() => lastTapped = icon);
-    }
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
-  void initState() {
-    super.initState();
-    menuAnimation = AnimationController(
-      duration: const Duration(milliseconds: 250),
-      vsync: this,
-    );
-  }
-
-  Widget flowMenuItem(IconData icon) {
-    final double buttonDiameter =
-        MediaQuery.of(context).size.width / menuItems.length;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: RawMaterialButton(
-        fillColor: lastTapped == icon ? Colors.amber[700] : Colors.blue,
-        splashColor: Colors.amber[100],
-        shape: const CircleBorder(),
-        constraints: BoxConstraints.tight(Size(buttonDiameter, buttonDiameter)),
-        onPressed: () {
-          _updateMenu(icon);
-          menuAnimation.status == AnimationStatus.completed
-              ? menuAnimation.reverse()
-              : menuAnimation.forward();
-        },
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: 45.0,
-        ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Hello ConvexAppBar')),
+      body: Center(
+          child:_widgetOptions[_selectedIndex]),
+      bottomNavigationBar: ConvexAppBar(
+        style: TabStyle.react,
+        items: [
+          TabItem(icon: Icons.list),
+          TabItem(icon: Icons.calendar_today),
+          TabItem(icon: Icons.assessment),
+        ],
+        initialActiveIndex: 1,
+        onTap: _onItemTapped
       ),
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Flow(
-      delegate: FlowMenuDelegate(menuAnimation: menuAnimation),
-      children:
-      menuItems.map<Widget>((IconData icon) => flowMenuItem(icon)).toList(),
-    );
-  }
 }
-
-class FlowMenuDelegate extends FlowDelegate {
-  FlowMenuDelegate({required this.menuAnimation})
-      : super(repaint: menuAnimation);
-
-  final Animation<double> menuAnimation;
-
-  @override
-  bool shouldRepaint(FlowMenuDelegate oldDelegate) {
-    return menuAnimation != oldDelegate.menuAnimation;
-  }
-
-  @override
-  void paintChildren(FlowPaintingContext context) {
-    double dx = 0.0;
-    for (int i = 0; i < context.childCount; ++i) {
-      dx = context.getChildSize(i)!.width * i;
-      context.paintChild(
-        i,
-        transform: Matrix4.translationValues(
-          dx * menuAnimation.value,
-          0,
-          0,
-        ),
-      );
-    }
-  }
-}
-
-const int itemCount = 20;
-
-class HomePage extends StatelessWidget {
-  // const HomePage({super.key});
-
-  @override
-
-  Widget build(BuildContext context) {
-    return Container(
-        padding: EdgeInsets.all(12.0),
-        child: GridView.builder(
-          itemCount: 4,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 4.0,
-              mainAxisSpacing: 4.0
-          ),
-          itemBuilder: (BuildContext context, int index){
-            return Image.asset("assets/images/image2.png");
-          },
-        ));
-
-  }
-}
-
-// class Item{
-//   String name;
-//   String offer;
-//   String
-// }
